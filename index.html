@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TymeTracker | 目標ページ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">T</div>
+          <div>
+            <p class="eyebrow">TymeTracker</p>
+            <h1>目標管理ページ</h1>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="メインナビゲーション">
+          <a href="#goals">目標</a>
+          <a href="#progress">進捗</a>
+          <a href="#review">振り返り</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="section-tag">今日の一歩を可視化</p>
+            <h2>目標を定義して、進捗を続けやすくする</h2>
+            <p class="lead">
+              目標を簡単に入力し、進捗が見える化されることで、
+              「やるべきこと」を迷わず続けられます。
+            </p>
+            <div class="cta-row">
+              <button class="primary-btn" type="button">目標を追加</button>
+              <button class="secondary-btn" type="button">進捗を見る</button>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="ring-wrap">
+              <div class="ring">
+                <span id="overallProgress">72%</span>
+              </div>
+            </div>
+            <div class="hero-stats">
+              <div>
+                <strong id="completedCount">3</strong>
+                <span>完了</span>
+              </div>
+              <div>
+                <strong id="activeCount">2</strong>
+                <span>進行中</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="goals">
+          <div class="section-header">
+            <div>
+              <p class="section-tag">目標設定</p>
+              <h3>今週の目標</h3>
+            </div>
+            <button class="small-btn" type="button" id="focusToggle">集中モード</button>
+          </div>
+
+          <form class="goal-form" id="goalForm">
+            <label>
+              目標名
+              <input id="goalName" type="text" placeholder="例: ランニング習慣をつくる" required />
+            </label>
+            <label>
+              区分
+              <select id="goalType">
+                <option value="健康">健康</option>
+                <option value="仕事">仕事</option>
+                <option value="学習">学習</option>
+                <option value="生活">生活</option>
+              </select>
+            </label>
+            <label>
+              期限
+              <input id="goalDeadline" type="date" />
+            </label>
+            <button class="primary-btn" type="submit">追加する</button>
+          </form>
+
+          <div class="goal-grid" id="goalList" aria-live="polite"></div>
+        </section>
+
+        <section class="stats-row" id="progress">
+          <article class="mini-card accent">
+            <p>達成率</p>
+            <strong id="achievementRate">72%</strong>
+          </article>
+          <article class="mini-card">
+            <p>残りの目標</p>
+            <strong id="remainingGoals">2件</strong>
+          </article>
+          <article class="mini-card">
+            <p>総タスク</p>
+            <strong id="totalTasks">12</strong>
+          </article>
+          <article class="mini-card">
+            <p>継続日数</p>
+            <strong>18日</strong>
+          </article>
+        </section>
+
+        <section class="panel review" id="review">
+          <div class="section-header">
+            <div>
+              <p class="section-tag">振り返り</p>
+              <h3>今週の気づき</h3>
+            </div>
+          </div>
+
+          <div class="review-content">
+            <div class="review-card">
+              <span class="badge success">良い点</span>
+              <p>一番大事な目標に対して、毎日の小さな実行ができています。</p>
+            </div>
+            <div class="review-card">
+              <span class="badge alert">改善点</span>
+              <p>土曜日の時間配分を見直すと、負担を減らせそうです。</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
