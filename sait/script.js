@@ -11,6 +11,8 @@ const goalInput = document.getElementById('goalInput');
 const goalHours = document.getElementById('goalHours');
 const goalList = document.getElementById('goalList');
 const progressList = document.getElementById('progressList');
+const reflectionChart = document.getElementById('reflectionChart');
+const chartSummary = document.getElementById('chartSummary');
 
 function calculateProgress(done, target) {
   return Math.min(100, Math.round((done / target) * 100));
@@ -62,6 +64,37 @@ function renderGoals() {
     .join('');
 }
 
+function renderReflectionChart(totalProgress) {
+  const chartItems = [
+    { label: '継続率', value: Math.min(100, totalProgress + 10), color: '#3f7df6' },
+    { label: '集中度', value: Math.min(100, totalProgress + 6), color: '#32b8a6' },
+    { label: '達成感', value: Math.min(100, totalProgress + 12), color: '#f5b84d' }
+  ];
+
+  if (!reflectionChart) {
+    return;
+  }
+
+  reflectionChart.innerHTML = chartItems
+    .map((item) => `
+      <div class="bar-row">
+        <span class="bar-label">${item.label}</span>
+        <div class="bar-track" aria-label="${item.label} ${item.value}%">
+          <div class="bar-fill" style="width: ${item.value}%; background: ${item.color};"></div>
+        </div>
+      </div>
+    `)
+    .join('');
+
+  if (chartSummary) {
+    chartSummary.textContent = totalProgress >= 80
+      ? '良いペース'
+      : totalProgress >= 60
+        ? '順調'
+        : '改善余地あり';
+  }
+}
+
 function updateDashboard() {
   const totalTarget = goals.reduce((sum, goal) => sum + goal.targetHours, 0);
   const totalDone = goals.reduce((sum, goal) => sum + goal.doneHours, 0);
@@ -76,6 +109,8 @@ function updateDashboard() {
   document.getElementById('totalHours').textContent = `${totalDone.toFixed(1)}h`;
   document.getElementById('remainingHours').textContent = `${remaining.toFixed(1)}h`;
   document.getElementById('weeklyCount').textContent = `${Math.max(1, Math.round(totalProgress / 20))}回`;
+
+  renderReflectionChart(totalProgress);
 
   const goodText = totalProgress >= 70
     ? '目標に対して十分なペースで進んでおり、継続が安定しています。'
