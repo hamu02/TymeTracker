@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Tracker</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script defer src="./script.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">TIME TRACKER</div>
+        <nav class="nav" aria-label="ページ内メニュー">
+          <a href="#goal">目標</a>
+          <a href="#progress">進捗</a>
+          <a href="#dashboard">ダッシュボード</a>
+          <a href="#reflection">振り返り</a>
+        </nav>
+        <button class="notice-button" type="button" aria-label="通知を表示">
+          通知
+          <span class="notice-count" id="noticeCount">3</span>
+        </button>
+      </header>
+
+      <main>
+        <section class="panel hero" aria-labelledby="main-title">
+          <div>
+            <p class="eyebrow">Reflection</p>
+            <h1 id="main-title">今日の一歩が、明日の成果をつくる</h1>
+            <p class="lead">
+              目標を簡単に入力し、進捗を見える化して、振り返りで次の行動を決めます。
+              ひとつのページで、目標・進捗・ダッシュボード・振り返りをまとめて管理できます。
+            </p>
+            <div class="hero-metrics">
+              <div class="metric">
+                <span class="metric-label">達成率</span>
+                <div class="metric-value" id="metricRate">72%</div>
+                <small>今月</small>
+              </div>
+              <div class="metric">
+                <span class="metric-label">学習時間</span>
+                <div class="metric-value" id="metricHours">18.5h</div>
+                <small>累計</small>
+              </div>
+              <div class="metric">
+                <span class="metric-label">次の目標</span>
+                <div class="metric-value" id="metricNext">2.5h</div>
+                <small>今日の残り</small>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notice-panel" aria-label="通知一覧">
+            <h3>通知</h3>
+            <ul class="notice-list">
+              <li>
+                <span class="dot"></span>
+                <div class="notice-text">
+                  <strong>週次の振り返り</strong>
+                  <span>今週の達成率が 78% を超えました。</span>
+                </div>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <div class="notice-text">
+                  <strong>学習の見直し</strong>
+                  <span>集中の要点は「英語の発音」でした。</span>
+                </div>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <div class="notice-text">
+                  <strong>次のアクション</strong>
+                  <span>明日は 2 時間の復習を入れましょう。</span>
+                </div>
+              </li>
+            </ul>
+          </aside>
+        </section>
+
+        <section id="goal" class="panel" aria-labelledby="goal-title">
+          <div class="section-header">
+            <h2 id="goal-title">目標</h2>
+            <span class="chip">入力</span>
+          </div>
+
+          <form id="goalForm" class="goal-form">
+            <input
+              id="goalInput"
+              class="field"
+              type="text"
+              placeholder="例：TOEIC 700点を目指して英語を伸ばす"
+              aria-label="目標を入力"
+            />
+            <input
+              id="goalHours"
+              class="field"
+              type="number"
+              min="1"
+              max="300"
+              placeholder="目標時間（h）"
+              aria-label="目標時間を入力"
+            />
+            <button type="submit">目標を追加</button>
+          </form>
+
+          <div id="goalList" class="goal-list" aria-live="polite"></div>
+        </section>
+
+        <section id="progress" class="panel" aria-labelledby="progress-title">
+          <div class="section-header">
+            <h2 id="progress-title">進捗</h2>
+            <span class="chip">自動更新</span>
+          </div>
+
+          <div class="goal-list" id="progressList"></div>
+        </section>
+
+        <section id="dashboard" class="panel" aria-labelledby="dashboard-title">
+          <div class="section-header">
+            <h2 id="dashboard-title">ダッシュボード</h2>
+            <span class="chip">進捗と同じ</span>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="big-card">
+              <h3>総合達成率</h3>
+              <div class="ring-wrap">
+                <div class="ring" id="totalRing" style="--value: 72">
+                  <div class="ring-value">
+                    <strong id="ringValue">72%</strong>
+                    <span>達成</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="progress-summary">
+              <div class="summary-item">
+                <span>累計時間</span>
+                <strong id="totalHours">18.5h</strong>
+              </div>
+              <div class="summary-item">
+                <span>残り時間</span>
+                <strong id="remainingHours">7.5h</strong>
+              </div>
+              <div class="summary-item">
+                <span>今週の回数</span>
+                <strong id="weeklyCount">4回</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="reflection" class="panel" aria-labelledby="reflection-title">
+          <div class="section-header">
+            <h2 id="reflection-title">振り返り</h2>
+            <span class="chip">メイン</span>
+          </div>
+
+          <div class="reflection-wrap">
+            <div class="reflection-card">
+              <h3>今週のふりかえり</h3>
+              <div class="reflection-item">
+                <small>良かったこと</small>
+                <p id="goodPoint">
+                  週初めに立てた目標に対して、毎日短時間でも継続できていたため、全体の達成感が高まりました。
+                </p>
+              </div>
+              <div class="reflection-item">
+                <small>学び</small>
+                <p id="learningPoint">
+                  夕方の集中力が安定しているため、難しい内容はその時間帯に配置すると成果が出やすいです。
+                </p>
+              </div>
+              <div class="reflection-item">
+                <small>次の一手</small>
+                <p id="nextAction">
+                  次週は、英語のリスニングを 30 分ずつ 3 回に分けて進め、毎回 3 点メモを残すようにします。
+                </p>
+              </div>
+            </div>
+
+            <div class="reflection-box">
+              <div class="mini-card">
+                <h4>今の状態</h4>
+                <p id="statusText">順調に進んでいます。引き続き継続がカギです。</p>
+              </div>
+              <div class="mini-card">
+                <h4>おすすめ</h4>
+                <p>小さな達成を積み重ねることで、習慣化しやすくなります。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
