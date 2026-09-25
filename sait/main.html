@@ -12,8 +12,7 @@
       <header class="topbar">
         <div class="brand">TIME TRACKER</div>
         <nav class="nav" aria-label="ページ内メニュー">
-          <a href="#goal">目標</a>
-          <a href="#progress">進捗</a>
+          <a href="#calendar">カレンダー</a>
           <a href="#dashboard">ダッシュボード</a>
           <a href="#reflection">振り返り</a>
         </nav>
@@ -79,10 +78,10 @@
           </aside>
         </section>
 
-        <section id="goal" class="panel" aria-labelledby="goal-title">
+        <section id="calendar" class="panel" aria-labelledby="calendar-section-title">
           <div class="section-header">
-            <h2 id="goal-title">目標</h2>
-            <span class="chip">入力</span>
+            <h2 id="calendar-section-title">カレンダー</h2>
+            <span class="chip">目標と期限</span>
           </div>
 
           <form id="goalForm" class="goal-form">
@@ -94,27 +93,33 @@
               aria-label="目標を入力"
             />
             <input
-              id="goalHours"
+              id="goalDate"
               class="field"
-              type="number"
-              min="1"
-              max="300"
-              placeholder="目標時間（h）"
-              aria-label="目標時間を入力"
+              type="date"
+              aria-label="目標日を入力"
             />
             <button type="submit">目標を追加</button>
           </form>
 
-          <div id="goalList" class="goal-list" aria-live="polite"></div>
-        </section>
-
-        <section id="progress" class="panel" aria-labelledby="progress-title">
-          <div class="section-header">
-            <h2 id="progress-title">進捗</h2>
-            <span class="chip">自動更新</span>
+          <div id="calendarPanel" class="calendar-panel">
+            <div class="calendar-header">
+              <button id="previousMonth" class="calendar-nav" type="button" aria-label="前の月">‹</button>
+              <h3 id="calendarTitle"></h3>
+              <button id="nextMonth" class="calendar-nav" type="button" aria-label="次の月">›</button>
+            </div>
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+            </div>
+            <div id="calendarGrid" class="calendar-grid" role="grid" aria-label="目標カレンダー"></div>
           </div>
 
-          <div class="goal-list" id="progressList"></div>
+          <div class="today-tasks" aria-live="polite">
+            <div class="today-tasks-header">
+              <h3>今日やらないといけない課題</h3>
+              <span id="todayTaskCount" class="task-count"></span>
+            </div>
+            <div id="todayTaskList" class="today-task-list"></div>
+          </div>
         </section>
 
         <section id="dashboard" class="panel" aria-labelledby="dashboard-title">
