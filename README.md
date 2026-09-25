@@ -21,3 +21,8 @@
 振り返り：同じ
 
 言語　html, css,js
+
+git switch -c sabu1
+git add .
+git commit -m "目標"
+git commit -m "目標のサイトページ"
