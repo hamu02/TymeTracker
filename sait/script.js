@@ -8,57 +8,109 @@ let goals = [...defaultGoals];
 
 const goalForm = document.getElementById('goalForm');
 const goalInput = document.getElementById('goalInput');
-const goalHours = document.getElementById('goalHours');
-const goalList = document.getElementById('goalList');
-const progressList = document.getElementById('progressList');
+const goalDate = document.getElementById('goalDate');
+const calendarPanel = document.getElementById('calendarPanel');
+const calendarTitle = document.getElementById('calendarTitle');
+const calendarGrid = document.getElementById('calendarGrid');
+const todayTaskCount = document.getElementById('todayTaskCount');
+const todayTaskList = document.getElementById('todayTaskList');
+let displayedMonth = new Date();
 
-function calculateProgress(done, target) {
-  return Math.min(100, Math.round((done / target) * 100));
+function getDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
-function renderGoals() {
-  goalList.innerHTML = goals
-    .map((goal) => {
-      const progress = calculateProgress(goal.doneHours, goal.targetHours);
-      return `
-        <article class="goal-item">
-          <div class="goal-head">
-            <h3 class="goal-title">${goal.title}</h3>
-            <span class="goal-badge">${progress}%</span>
-          </div>
-          <div class="goal-meta">${goal.doneHours}h / ${goal.targetHours}h</div>
-          <div class="progress-line">
-            <div class="progress-bar" style="width: ${progress}%; background: linear-gradient(90deg, ${goal.color}, #9ec3ff);"></div>
-          </div>
-          <div class="goal-footer">
-            <span>進行中</span>
-            <span>${goal.targetHours - goal.doneHours}h 残り</span>
-          </div>
-        </article>
-      `;
-    })
-    .join('');
+defaultGoals.forEach((goal, index) => {
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + index * 7);
+  goal.date = getDateKey(dueDate);
+});
 
-  progressList.innerHTML = goals
-    .map((goal) => {
-      const progress = calculateProgress(goal.doneHours, goal.targetHours);
-      return `
-        <article class="goal-item">
-          <div class="goal-head">
-            <h3 class="goal-title">${goal.title}</h3>
-            <span class="goal-badge">${progress}%</span>
-          </div>
-          <div class="goal-meta">現在の状態: ${goal.doneHours}h / ${goal.targetHours}h</div>
-          <div class="progress-line">
-            <div class="progress-bar" style="width: ${progress}%; background: linear-gradient(90deg, ${goal.color}, #a7d8ff);"></div>
-          </div>
-          <div class="goal-footer">
-            <span>更新中</span>
-            <span>${progress >= 100 ? '完了' : '継続中'}</span>
-          </div>
-        </article>
-      `;
-    })
+function getRemainingDays(dateKey) {
+  const today = new Date(`${getDateKey()}T00:00:00`);
+  const dueDate = new Date(`${dateKey}T00:00:00`);
+  return Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+}
+
+function renderCalendar() {
+  const year = displayedMonth.getFullYear();
+  const month = displayedMonth.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayKey = getDateKey();
+  const goalsByDate = goals.reduce((result, goal) => {
+    if (!result[goal.date]) result[goal.date] = [];
+    result[goal.date].push(goal);
+    return result;
+  }, {});
+
+  calendarTitle.textContent = `${year}年${month + 1}月`;
+  calendarGrid.innerHTML = '';
+
+  for (let index = 0; index < firstDay; index += 1) {
+    const emptyCell = document.createElement('span');
+    emptyCell.className = 'calendar-day is-empty';
+    emptyCell.setAttribute('aria-hidden', 'true');
+    calendarGrid.appendChild(emptyCell);
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const date = new Date(year, month, day);
+    const dateKey = getDateKey(date);
+    const dayCell = document.createElement('div');
+    dayCell.className = `calendar-day${dateKey === todayKey ? ' is-today' : ''}`;
+    dayCell.setAttribute('role', 'gridcell');
+
+    const number = document.createElement('span');
+    number.className = 'calendar-date';
+    number.textContent = day;
+    dayCell.appendChild(number);
+
+    (goalsByDate[dateKey] || []).forEach((goal) => {
+      const goalLabel = document.createElement('span');
+      goalLabel.className = 'calendar-goal';
+      goalLabel.style.setProperty('--goal-color', goal.color);
+      goalLabel.textContent = goal.title;
+      goalLabel.title = `${goal.title} (${goal.targetHours}h)`;
+      dayCell.appendChild(goalLabel);
+
+      const remainingDays = getRemainingDays(goal.date);
+      const remainingLabel = document.createElement('small');
+      remainingLabel.className = 'calendar-remaining';
+      remainingLabel.textContent = remainingDays > 0
+        ? `あと${remainingDays}日`
+        : remainingDays === 0
+          ? '今日が期限'
+          : `${Math.abs(remainingDays)}日超過`;
+      dayCell.appendChild(remainingLabel);
+    });
+
+    calendarGrid.appendChild(dayCell);
+  }
+
+  renderTodayTasks();
+}
+
+function renderTodayTasks() {
+  const todayGoals = goals.filter((goal) => goal.date === getDateKey());
+  todayTaskCount.textContent = `${todayGoals.length}件`;
+
+  if (todayGoals.length === 0) {
+    todayTaskList.innerHTML = '<p class="empty-task-message">今日の課題はありません。</p>';
+    return;
+  }
+
+  todayTaskList.innerHTML = todayGoals
+    .map((goal) => `
+      <article class="today-task">
+        <span class="task-marker" style="--goal-color: ${goal.color};"></span>
+        <strong>${goal.title}</strong>
+        <span class="task-status">今日が期限</span>
+      </article>
+    `)
     .join('');
 }
 
@@ -104,24 +156,34 @@ goalForm.addEventListener('submit', function (event) {
   event.preventDefault();
 
   const title = goalInput.value.trim();
-  const hours = Number(goalHours.value);
 
-  if (!title || !hours || hours <= 0) {
-    alert('目標名と目標時間を正しく入力してください。');
+  if (!title) {
+    alert('課題名を入力してください。');
     return;
   }
 
   goals.push({
     title,
-    targetHours: hours,
+    targetHours: 1,
     doneHours: 0,
+    date: goalDate.value || getDateKey(),
     color: ['#3f7df6', '#32b8a6', '#f5b84d'][goals.length % 3]
   });
 
   goalInput.value = '';
-  goalHours.value = '';
-  renderGoals();
+  goalDate.value = getDateKey();
+  renderCalendar();
   updateDashboard();
+});
+
+document.getElementById('previousMonth').addEventListener('click', () => {
+  displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+  renderCalendar();
+});
+
+document.getElementById('nextMonth').addEventListener('click', () => {
+  displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+  renderCalendar();
 });
 
 function autoProgress() {
@@ -131,10 +193,11 @@ function autoProgress() {
     return { ...goal, doneHours: Number(next.toFixed(1)) };
   });
 
-  renderGoals();
+  renderCalendar();
   updateDashboard();
 }
 
-renderGoals();
+renderCalendar();
 updateDashboard();
+goalDate.value = getDateKey();
 setInterval(autoProgress, 2500);
